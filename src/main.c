@@ -1,7 +1,15 @@
 /* Main file, used for debugging and testing implementation */
 
 
+
+
 #include "../include/PSP.h"
+
+/* Debugging */
+#define BUFFERINITDEBUG 0
+#define BUFFERREQUESTDEBUG 0
+#define BUFFERINPUTDEBUG 0
+#define PACKETREADDEBUG 1
 
 
 int main() {
@@ -41,6 +49,11 @@ int main() {
     // Ensuring buffers are added - WORKS
     printMultiLevelStack();
 
+#endif
+
+#if PACKETREADDEBUG
+    struct buffer * buf = packetRead_BUSNAME_();
+    fprintf(stderr, "Successful Packet Read: %s\n", buf->data);
 #endif
 
 

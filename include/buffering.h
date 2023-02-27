@@ -1,9 +1,4 @@
 
-/* Debugging */
-#define BUFFERINITDEBUG 0
-#define BUFFERREQUESTDEBUG 0
-#define BUFFERINPUTDEBUG 0
-
 /* Buffer to store data */
 struct buffer {
     struct segment header; //Store header of buffer
