@@ -2,9 +2,6 @@ CCo = gcc -o
 CCc = gcc -c
 
 all: main
-	git add --all
-	git commit -m "Commit"
-	git push
 
 
 buffering.o: ../src/buffering.c ../include/buffering.h
@@ -13,10 +10,14 @@ buffering.o: ../src/buffering.c ../include/buffering.h
 packet.o: ../src/packet.c ../include/packet.h
 		$(CCc) ../src/packet.c
 
-main: buffering.o packet.o
-		$(CCo) main ../src/main.c buffering.o packet.o
+dummyDriver.o: ../src/dummyDriver.c ../include/dummyDriver.h
+		$(CCc) ../src/dummyDriver.c
+
+main: buffering.o packet.o dummyDriver.o
+		$(CCo) main ../src/main.c buffering.o packet.o dummyDriver.o
 
 clean:
 	rm -f main
 	rm -f buffering.o
 	rm -f packet.o
+	rm -f dummyDriver.o
