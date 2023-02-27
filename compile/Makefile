@@ -2,6 +2,9 @@ CCo = gcc -o
 CCc = gcc -c
 
 all: main
+	git add --all
+	git commit -m "Commit"
+	git push
 
 
 buffering.o: ../src/buffering.c ../include/buffering.h
