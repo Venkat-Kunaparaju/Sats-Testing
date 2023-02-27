@@ -1,7 +1,7 @@
 
 /* Debugging */
 #define BUFFERINITDEBUG 0
-#define BUFFERREQUESTDEBUG 1
+#define BUFFERREQUESTDEBUG 0
 #define BUFFERINPUTDEBUG 0
 
 /* Buffer to store data */
@@ -40,4 +40,6 @@ int initializeBuffers(void);
 struct buffer * requestBuffer(int);
 
 int inputBuffer(struct buffer *);
+
+void printMultiLevelStack();
 
