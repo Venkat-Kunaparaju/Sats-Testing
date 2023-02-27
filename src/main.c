@@ -48,6 +48,14 @@ int main() {
 #if PACKETREADDEBUG
     struct buffer * buf = packetRead_BUSNAME_();
     fprintf(stderr, "Successful Packet Read: %s\n", buf->data);
+    fprintf(stderr, "Header of packet read: \n%u\n%u\n%u\n", buf->header.priSourcePort, buf->header.destPortReserved, buf->header.reservedFlags);
+
+    //Extract last 2 bits to obtain the priority field value (would be done in transport layer code)
+    unsigned char prioMask = 0xC0;
+    unsigned char priority = buf->header.priSourcePort & prioMask;
+    priority = priority>>6;
+    fprintf(stderr, "Extracted priority field: %u\n", priority);
+
 #endif
 
 #if PACKETWRITEDEBUG
