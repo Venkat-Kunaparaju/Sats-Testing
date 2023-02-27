@@ -22,7 +22,7 @@ would need to be made to all 3 general functions outlined
 
 /* Debugging */
 #define BUFFERINITDEBUG 0
-#define BUFFERREQUESTDEBUG 0
+#define BUFFERREQUESTDEBUG 1
 #define BUFFERINPUTDEBUG 0
 
 /* Buffer to store data */
@@ -40,8 +40,9 @@ struct sentinel {
     void *next;
 };
 
-/* Stores a different size buffers at each index in decreasing order (0 stores highest) */
-struct sentinel multiLevelStack[3]; 
+/* Stores a different size buffers at each index in ascending order (0 stores lowest) */
+#define LEVELS 3
+struct sentinel multiLevelStack[LEVELS]; 
 
 /* Initialize buffers, both big and small */
 int initializeBuffers() {
@@ -53,7 +54,7 @@ int initializeBuffers() {
         new = (struct buffer *)malloc(STRUCTBUFFERSIZE + BIGMAXSIZEBUFFER);
         new->size = BIGMAXSIZEBUFFER;
         if (i == 0) {
-            multiLevelStack[0].next = new;
+            multiLevelStack[2].next = new;
         } else {
             old->next = new;
         }
@@ -75,7 +76,7 @@ int initializeBuffers() {
         new = (struct buffer *)malloc(STRUCTBUFFERSIZE + SMALLMAXSIZEBUFFER);
         new->size = SMALLMAXSIZEBUFFER;
         if (i == 0) {
-            multiLevelStack[2].next = new; //Changed per for loop
+            multiLevelStack[0].next = new; //Changed per for loop
         } else {
             old->next = new;
         }
@@ -113,25 +114,25 @@ void printMultiLevelStack() {
 }
 
 /* Remove and return buffer based on size */
-struct buffer * requestBuffer(int size) {
+struct buffer * requestBuffer(int inputSize) {
     struct buffer * output;
-    if (size <= SMALLMAXSIZEBUFFER) {
-        output = multiLevelStack[2].next;
-        multiLevelStack[2].next = output->next;
+    //Find correct level that fits size
+    int removed = 0;
+    for (int i = 0; i < LEVELS; i++) {
+        if (((struct buffer *)(multiLevelStack[i].next))->size >= inputSize) {
+            output = multiLevelStack[i].next;
+            multiLevelStack[i].next = output->next;
+            removed = 1;
+        }
+        if (removed) {
+            break;
+        }
     }
-    else if (size <= MEDMAXSIZEBUFFER) {
-        output = multiLevelStack[1].next;
-        multiLevelStack[1].next = output->next;
+    if (removed) {
+        output->next = NULL;
+        return output;
     }
-    else if (size <= BIGMAXSIZEBUFFER) {
-        output = multiLevelStack[0].next;
-        multiLevelStack[0].next = output->next;
-    } 
-    else {
-        return NULL;
-    }
-    output->next = NULL;
-    return output;
+    return NULL;
 }
 
 int inputBuffer(struct buffer *input) {
