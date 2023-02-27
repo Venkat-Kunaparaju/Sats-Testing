@@ -5,12 +5,6 @@
 
 #include "../include/PSP.h"
 
-/* Debugging */
-#define BUFFERINITDEBUG 0
-#define BUFFERREQUESTDEBUG 0
-#define BUFFERINPUTDEBUG 0
-#define PACKETREADDEBUG 1
-
 
 int main() {
     //fprintf(stderr, "Size of buffer: %lu\n", STRUCTBUFFERSIZE);
@@ -54,6 +48,13 @@ int main() {
 #if PACKETREADDEBUG
     struct buffer * buf = packetRead_BUSNAME_();
     fprintf(stderr, "Successful Packet Read: %s\n", buf->data);
+#endif
+
+#if PACKETWRITEDEBUG
+    struct buffer * buf = packetRead_BUSNAME_();
+    packetWrite_BUSNAME_(buf);
+    memcpy(buf->data, "DATA", strlen("DATA"));
+    packetWrite_BUSNAME_(buf);
 #endif
 
 

@@ -26,7 +26,7 @@ struct buffer * packetRead_BUSNAME_() {
 /*
 Write packets to bus, that came from transport layer (due to error or application sending data)
 */
-int packet packetWrite_BUSNAME_(struct buffer * buf) {
-    write()
-
+int packetWrite_BUSNAME_(struct buffer * buf) {
+    write(0, (void *)buf->data, buf->size);
+    return 1;
 }

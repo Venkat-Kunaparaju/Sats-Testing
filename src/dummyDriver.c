@@ -20,5 +20,8 @@ int write(int fd, void *buf, int size) {
     char * outputData = buf;
     char * imagineThisIsOutPutLine = malloc(size);
     memcpy(imagineThisIsOutPutLine, outputData, size);
+#if PACKETWRITEDEBUG
+    fprintf(stderr, "This is what was written: %s\n", imagineThisIsOutPutLine);
+#endif
     return 1;
 }

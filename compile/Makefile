@@ -13,7 +13,7 @@ packet.o: ../src/packet.c ../include/packet.h
 dummyDriver.o: ../src/dummyDriver.c ../include/dummyDriver.h
 		$(CCc) ../src/dummyDriver.c
 
-main: buffering.o packet.o dummyDriver.o
+main: buffering.o packet.o dummyDriver.o ../src/main.c
 		$(CCo) main ../src/main.c buffering.o packet.o dummyDriver.o
 
 clean:

@@ -1,7 +1,7 @@
 
 /* Buffer to store data */
 struct buffer {
-    struct segment header; //Store header of buffer
+    struct packetHeader header; //Store header of buffer
     struct buffer * next; //Store next available buffer
     int size;
     char data[0]; //Store data
