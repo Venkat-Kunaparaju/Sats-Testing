@@ -91,20 +91,6 @@ int initializeBuffers() {
     return 1;
 }
 
-/* Debugging function to print multiLevelStack */
-void printMultiLevelStack() {
-    for (int i = 0; i < LEVELS; i++) {
-        struct buffer * head = multiLevelStack[i].next;
-        int c = 0;
-        while (head != NULL) {
-            c++;
-            head = head->next;
-        }
-        fprintf(stderr, "Number of buffers at %d is: %d\n", i, c);
-    }
-
-}
-
 /* Remove and return buffer based on size */
 struct buffer * requestBuffer(int inputSize) {
     struct buffer * output;
@@ -132,6 +118,20 @@ int inputBuffer(struct buffer *input) {
     }
     return -1;
     
+}
+
+/* Debugging function to print multiLevelStack */
+void printMultiLevelStack() {
+    for (int i = 0; i < LEVELS; i++) {
+        struct buffer * head = multiLevelStack[i].next;
+        int c = 0;
+        while (head != NULL) {
+            c++;
+            head = head->next;
+        }
+        fprintf(stderr, "Number of buffers at %d is: %d\n", i, c);
+    }
+
 }
 
 int main() {
