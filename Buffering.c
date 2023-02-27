@@ -1,24 +1,14 @@
 /* Code to test temporarily buffering input data */
 
 /*
-Instead of having a multiLevelStack operating on fixed sizes 
-(which means that the design won't be modular) because changes
-would need to be made to all 3 general functions outlined
-
+With this design, the only thing that would need to change is the levels
+of the multi level stack to hold buffers, the macros to detrmine the size of number of buffers,
+at each specified level, and using that to change initializeBuffers(). As a result, the only
+substantial changes needed are for initializing the buffers depending on use case.
+The remove, insert, and structs will stay the same from mission to mission.
 */
 
 #include "PSP.h"
-
-/* Specifies the number of buffers for a specifc size and the size of data the buffer will hold */
-#define BIGNUMBUFFERS 5
-#define BIGMAXSIZEBUFFER 50
-
-#define MEDNUMBUFFERS 7
-#define MEDMAXSIZEBUFFER 35
-
-#define SMALLNUMBUFFERS 10
-#define SMALLMAXSIZEBUFFER 20
-
 
 /* Debugging */
 #define BUFFERINITDEBUG 0
@@ -37,12 +27,24 @@ struct buffer {
 
 /* Sentinel used for storing head of buffer blocks */
 struct sentinel {
+    int size;
     void *next;
 };
 
 /* Stores a different size buffers at each index in ascending order (0 stores lowest) */
 #define LEVELS 3
 struct sentinel multiLevelStack[LEVELS]; 
+
+
+/* Specifies the number of buffers for a specifc size and the size of data the buffer will hold */
+#define BIGNUMBUFFERS 5
+#define BIGMAXSIZEBUFFER 50
+
+#define MEDNUMBUFFERS 7
+#define MEDMAXSIZEBUFFER 35
+
+#define SMALLNUMBUFFERS 10
+#define SMALLMAXSIZEBUFFER 20
 
 /* Initialize buffers, both big and small */
 int initializeBuffers() {
@@ -55,6 +57,7 @@ int initializeBuffers() {
         new->size = BIGMAXSIZEBUFFER;
         if (i == 0) {
             multiLevelStack[2].next = new;
+            multiLevelStack[2].size = BIGMAXSIZEBUFFER;
         } else {
             old->next = new;
         }
@@ -66,6 +69,7 @@ int initializeBuffers() {
         new->size = MEDMAXSIZEBUFFER;
         if (i == 0) {
             multiLevelStack[1].next = new; //Changed per for loop
+            multiLevelStack[1].size = MEDMAXSIZEBUFFER;
         } else {
             old->next = new;
         }
@@ -77,6 +81,7 @@ int initializeBuffers() {
         new->size = SMALLMAXSIZEBUFFER;
         if (i == 0) {
             multiLevelStack[0].next = new; //Changed per for loop
+            multiLevelStack[0].size = SMALLMAXSIZEBUFFER;
         } else {
             old->next = new;
         }
@@ -88,70 +93,45 @@ int initializeBuffers() {
 
 /* Debugging function to print multiLevelStack */
 void printMultiLevelStack() {
-    int i = 0;
-    struct buffer * head = multiLevelStack[0].next;
-    while (head != NULL) {
-        i ++;
-        head = head->next;
+    for (int i = 0; i < LEVELS; i++) {
+        struct buffer * head = multiLevelStack[i].next;
+        int c = 0;
+        while (head != NULL) {
+            c++;
+            head = head->next;
+        }
+        fprintf(stderr, "Number of buffers at %d is: %d\n", i, c);
     }
-    fprintf(stderr, "Number of big buffers is: %d\n", i);
 
-    i = 0;
-    head = multiLevelStack[1].next;
-    while (head != NULL) {
-        i ++;
-        head = head->next;
-    }
-    fprintf(stderr, "Number of med buffers is: %d\n", i);
-
-    i = 0;
-    head = multiLevelStack[2].next;
-    while (head != NULL) {
-        i ++;
-        head = head->next;
-    }
-    fprintf(stderr, "Number of small buffers is: %d\n", i);
 }
 
 /* Remove and return buffer based on size */
 struct buffer * requestBuffer(int inputSize) {
     struct buffer * output;
     //Find correct level that fits size
-    int removed = 0;
     for (int i = 0; i < LEVELS; i++) {
-        if (((struct buffer *)(multiLevelStack[i].next))->size >= inputSize) {
+        if (multiLevelStack[i].size >= inputSize) {
             output = multiLevelStack[i].next;
             multiLevelStack[i].next = output->next;
-            removed = 1;
+            output->next = NULL;
+            return output;
         }
-        if (removed) {
-            break;
-        }
-    }
-    if (removed) {
-        output->next = NULL;
-        return output;
     }
     return NULL;
 }
 
+/* Insert buffer based on size field */
 int inputBuffer(struct buffer *input) {
-    if (input->size <= SMALLMAXSIZEBUFFER) {
-        input->next = multiLevelStack[2].next;
-        multiLevelStack[2].next = input;
+     //Find correct level that fits size
+    for (int i = 0; i < LEVELS; i++) {
+        if (multiLevelStack[i].size >= input->size) {
+            input->next = multiLevelStack[i].next;
+            multiLevelStack[i].next = input;
+            return 1;
+        }
     }
-    else if (input->size <= MEDMAXSIZEBUFFER) {
-        input->next = multiLevelStack[1].next;
-        multiLevelStack[1].next = input;
-    }
-    else if (input->size <= BIGMAXSIZEBUFFER) {
-        input->next = multiLevelStack[0].next;
-        multiLevelStack[0].next = input;
-    } 
-    else {
-        return -1;
-    }
-    return 1;
+    return -1;
+    
 }
 
 int main() {
@@ -181,12 +161,12 @@ int main() {
     check1->size = 40;
 
     struct buffer *check2 = (struct buffer *)malloc(STRUCTBUFFERSIZE + SMALLMAXSIZEBUFFER);
-    check2->size = 32;
+    check2->size = 35;
 
     struct buffer *check3 = (struct buffer *)malloc(STRUCTBUFFERSIZE + SMALLMAXSIZEBUFFER);
     check3->size = 15;
 
-    fprintf(stderr, "Inser Check: %d, %d, %d", inputBuffer(check1), inputBuffer(check2), inputBuffer(check3));
+    fprintf(stderr, "Inser Check: %d, %d, %d\n", inputBuffer(check1), inputBuffer(check2), inputBuffer(check3));
 
     // Ensuring buffers are added - WORKS
     printMultiLevelStack();
