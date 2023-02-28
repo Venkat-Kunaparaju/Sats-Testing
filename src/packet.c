@@ -16,7 +16,8 @@ int packetRead_BUSNAME_() {
         read(0, (void *)buf->data); //Blocks on bus
 
         /* Assignment of priority and initalization of other header information done here */
-        /* If this is coming from a NON cots component we would have to read buf->data to determine header info */
+        /* If this is coming from a NON cots component we would just pass in buf and not buf->data 
+        to read and avoid doing the stuff below */
 
         //Set priority to 3 (11xxxxxx)
         buf->header.priSourcePort |= 0xF0; //Set last 4 bits to 1

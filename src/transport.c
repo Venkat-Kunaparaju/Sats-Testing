@@ -15,7 +15,7 @@ int transportInit() {
 }
 int transportMain() {
     while(1) {
-        if (transportQ.next != NULL) { //While there is something in the Q, then do something
+        while (transportQ.next != NULL) { //While there is something in the Q, then do something
             dequeTransportQ();
             fprintf(stderr, "Do something\n"); //Do error checking packet and forwarding then move on to next one
         }
