@@ -16,12 +16,12 @@ int packetRead_BUSNAME_() {
         read(0, (void *)buf->data); //Blocks on bus
 
         /* Assignment of priority and initalization of other header information done here */
-        /* If this is coming from a NON cots component we would just pass in buf and not buf->data 
-        to read and avoid doing the stuff below */
+        /* If this is coming from a NON cots component we would have to populate header from first 3 bytes in buf->data */
 
         //Set priority to 3 (11xxxxxx)
+        /* Last -> left, first -> right */
         buf->header.priSourcePort |= 0xF0; //Set last 4 bits to 1
-        buf->header.priSourcePort ^= 0x30; //XOR operator unsent the first 2 of the flast 4 bits
+        buf->header.priSourcePort ^= 0x30; //XOR operator unsent the first 2 of the last 4 bits
 
         //Set source port to 59 (xx111011)
         buf->header.priSourcePort |= 0x3F; //Set the first 2 of the last 4 bits to 1, and set the the first 4 bits to 1

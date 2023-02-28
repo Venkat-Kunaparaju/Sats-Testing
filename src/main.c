@@ -46,6 +46,7 @@ int main() {
 #endif
 
 #if PACKETREADDEBUG
+     /* Will throw an error now if run cause I changed functionality */
     struct buffer * buf = packetRead_BUSNAME_();
     fprintf(stderr, "Successful Packet Read: %s\n", buf->data);
     fprintf(stderr, "Header of packet read: \n%u\n%u\n%u\n", buf->header.priSourcePort, buf->header.destPortReserved, buf->header.reservedFlags);
@@ -59,6 +60,7 @@ int main() {
 #endif
 
 #if PACKETWRITEDEBUG
+    /* Will throw an error now if run cause I changed functionality */
     struct buffer * buf = packetRead_BUSNAME_();
     packetWrite_BUSNAME_(buf);
     memcpy(buf->data, "DATA", strlen("DATA"));
@@ -72,6 +74,16 @@ int main() {
     packetRead_BUSNAME_();
     packetRead_BUSNAME_();
     transportMain();
+#endif
+
+#if TRANSPORTPORTQDEBUG
+    transportInit();
+    packetRead_BUSNAME_();
+    packetRead_BUSNAME_();
+    packetRead_BUSNAME_();
+    packetRead_BUSNAME_();
+    transportMain();
+    printPortQs();
 #endif
 
 
