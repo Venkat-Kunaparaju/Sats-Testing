@@ -1,8 +1,8 @@
 
 
-struct buffer * packetRead_BUSNAME_(void);
+int packetRead_BUSNAME_(void);
 
-int packetWrite_BUSNAME_(struct buffer *);
+int packetWrite_BUSNAME_(void *);
 
 struct packetHeader {
     unsigned char priSourcePort; //First two bits is priority, Last 6 bits is source port

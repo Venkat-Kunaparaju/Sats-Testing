@@ -3,6 +3,7 @@
 struct buffer {
     struct packetHeader header; //Store header of buffer
     struct buffer * next; //Store next available buffer
+    struct buffer *prev;
     int size;
     char data[0]; //Store data
 };
@@ -12,7 +13,8 @@ struct buffer {
 /* Sentinel used for storing head of buffer blocks */
 struct sentinel {
     int size;
-    void *next;
+    struct buffer *next;
+    struct buffer *prev;
 };
 
 /* Stores a different size buffers at each index in ascending order (0 stores lowest) */

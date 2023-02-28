@@ -65,6 +65,16 @@ int main() {
     packetWrite_BUSNAME_(buf);
 #endif
 
+#if TRANSPORTDQDEBUG
+    transportInit();
+    packetRead_BUSNAME_();
+    packetRead_BUSNAME_();
+    packetRead_BUSNAME_();
+    packetRead_BUSNAME_();
+    transportMain();
+#endif
+
+
 
     return 1;
 }
